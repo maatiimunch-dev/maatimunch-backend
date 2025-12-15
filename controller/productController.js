@@ -146,40 +146,58 @@ const validateAndConvertCategory = async (categoryInput) => {
 // Create Product (Fixed with proper category handling)
 const createProduct = async (req, res) => {
   try {
-    req.body = cleanRequestBody(req.body); // Clean input
+    req.body = cleanRequestBody(req.body);
 
     const { 
       name, 
       price, 
       category, 
       description, 
-      bestSeller = false  // Default to false if not provided
+      bestSeller = false
     } = req.body;
     
-    console.log('🟡 Received product:', req.body); // Check incoming data
+    console.log('🟡 Received product:', req.body);
     
-    if (!name || !price || !category) {
-      return res.status(400).json({ message: 'Please provide name, price, and category' });
+    // Only validate name and price - category is now optional
+    if (!name || !price) {
+      return res.status(400).json({ message: 'Please provide name and price' });
     }
 
-    // Validate and convert category to ObjectId
-    const categoryId = await validateAndConvertCategory(category);
-
-    // Use the processAndUploadImages function
-    const uploadedImages = req.files?.length ? await processAndUploadImages(req.files) : [];
-    console.log('🟢 Uploaded images:', uploadedImages); // Check uploaded images
-
-    const product = await Product.create({
+    // Prepare product data
+    const productData = {
       name,
       price,
       description,
-      category: categoryId, // Use ObjectId
       bestSeller,
-      images: uploadedImages,
-    });
+    };
 
-    // Populate category for response
-    await product.populate('category', 'name');
+    // Only add category if it's provided
+    if (category) {
+      try {
+        const categoryId = await validateAndConvertCategory(category);
+        productData.category = categoryId;
+      } catch (categoryError) {
+        console.error('❌ Category validation error:', categoryError);
+        return res.status(400).json({ 
+          success: false, 
+          message: categoryError.message 
+        });
+      }
+    }
+
+    // Upload images
+    const uploadedImages = req.files?.length ? await processAndUploadImages(req.files) : [];
+    console.log('🟢 Uploaded images:', uploadedImages);
+    
+    productData.images = uploadedImages;
+
+    // Create product
+    const product = await Product.create(productData);
+
+    // Populate category if it exists
+    if (product.category) {
+      await product.populate('category', 'name');
+    }
 
     res.status(201).json({
       success: true,
@@ -195,10 +213,10 @@ const createProduct = async (req, res) => {
   }
 };
 
-// Edit Product (Fixed with proper category handling)
+// Also update editProduct function:
 const editProduct = async (req, res) => {
   try {
-    req.body = cleanRequestBody(req.body); // Clean input
+    req.body = cleanRequestBody(req.body);
 
     const { id } = req.params;
     const { name, price, description, category, bestSeller } = req.body;
@@ -208,9 +226,8 @@ const editProduct = async (req, res) => {
 
     // Handle image updates
     if (req.files?.length) { 
-      // Use processAndUploadImages for edit as well
       const newImages = await processAndUploadImages(req.files);
-      product.images = newImages;  // Replace instead of appending
+      product.images = newImages;
     }
  
     // Update fields if provided
@@ -219,16 +236,26 @@ const editProduct = async (req, res) => {
     if (description) product.description = description;
     if (bestSeller !== undefined) product.bestSeller = bestSeller;
     
-    // Handle category update
+    // Handle category update - only if provided
     if (category) {
-      const categoryId = await validateAndConvertCategory(category);
-      product.category = categoryId;
+      try {
+        const categoryId = await validateAndConvertCategory(category);
+        product.category = categoryId;
+      } catch (categoryError) {
+        console.error('❌ Category validation error:', categoryError);
+        return res.status(400).json({ 
+          success: false, 
+          message: categoryError.message 
+        });
+      }
     }
 
     await product.save();
 
-    // Populate category for response
-    await product.populate('category', 'name');
+    // Populate category if it exists
+    if (product.category) {
+      await product.populate('category', 'name');
+    }
 
     res.status(200).json({
       success: true,
@@ -243,6 +270,14 @@ const editProduct = async (req, res) => {
     });
   }
 };
+
+
+
+
+
+
+
+
 
 // Fetch Products (Fixed with proper category filtering)
 // Enhanced fetchProduct with improved search capabilities

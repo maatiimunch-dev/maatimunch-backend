@@ -1,4 +1,3 @@
-
 const mongoose = require('mongoose');
 
 const ProductSchema = new mongoose.Schema({
@@ -19,6 +18,7 @@ const ProductSchema = new mongoose.Schema({
   category: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Category',
+    required: false, 
   },
   bestSeller: {
     type: Boolean,
@@ -26,21 +26,15 @@ const ProductSchema = new mongoose.Schema({
   },
   images: [
     {
-      url: { type: String, required: true }, // Image URL (from ImageKit)
-      fileName: { type: String }, // Original file name
+      url: { type: String, required: true },
+      fileName: { type: String },
     },
   ],
 }, {
-  timestamps: true, // Automatically adds createdAt and updatedAt
+  timestamps: true,
 });
 
 // Add text index for better search performance
 ProductSchema.index({ name: 'text', description: 'text' });
 
 module.exports = mongoose.model('Product', ProductSchema);
-
-
-
-
-
-
