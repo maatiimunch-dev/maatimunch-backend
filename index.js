@@ -107,6 +107,7 @@ app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/categories', require('./routes/categoryRoutes'));
 app.use('/api/products', require('./routes/productRoutes'));
 app.use('/api/payments', paymentLimiter, require('./routes/paymentRoutes'));
+app.use('/api/blogs', require('./routes/blogRoutes'));
 
 app.get('/', (req, res) => {
   res.json({ message: 'Secure API running 🚀' });
