@@ -73,10 +73,8 @@ const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:5174',
   'http://localhost:5175',
-  'https://shubhammusicals.com',
-  'https://shubhammusicalfrontennddashboard.onrender.com',
-  'https://marbelsdashboard.onrender.com',
-  'https://www.shubhammusicals.com',
+  'https://maatimunch-fronted.onrender.com',
+  'https://maatimunch-dashboard.onrender.com',
 ];
 
 app.use(cors({
