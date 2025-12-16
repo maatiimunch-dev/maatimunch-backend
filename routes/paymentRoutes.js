@@ -450,20 +450,43 @@ router.post('/verify-payment', auth, [
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
 
     // Verify signature
-    const body = razorpay_order_id + "|" + razorpay_payment_id;
-    const expectedSignature = crypto
-      .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
-      .update(body.toString())
-      .digest('hex');
+    // const body = razorpay_order_id + "|" + razorpay_payment_id;
+    // const expectedSignature = crypto
+    //   .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
+    //   .update(body.toString())
+    //   .digest('hex');
 
-    const isAuthentic = expectedSignature === razorpay_signature;
+    // const isAuthentic = expectedSignature === razorpay_signature;
 
-    if (!isAuthentic) {
-      return res.status(400).json({
-        success: false,
-        message: 'Payment verification failed'
-      });
-    }
+    // if (!isAuthentic) {
+    //   return res.status(400).json({
+    //     success: false,
+    //     message: 'Payment verification failed'
+    //   });
+    // }
+
+
+    // Verify signature
+const body = razorpay_order_id + "|" + razorpay_payment_id;
+const expectedSignature = crypto
+  .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
+  .update(body.toString())
+  .digest('hex');
+
+let isAuthentic = expectedSignature === razorpay_signature;
+
+// 🔥 DEV MODE BYPASS (ONLY FOR LOCAL TESTING)
+if (process.env.NODE_ENV === "development") {
+  isAuthentic = true;
+}
+
+if (!isAuthentic) {
+  return res.status(400).json({
+    success: false,
+    message: 'Payment verification failed'
+  });
+}
+
 
     // Find order and populate all necessary data
     const order = await Order.findOne({ razorpayOrderId: razorpay_order_id })

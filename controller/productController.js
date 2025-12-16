@@ -706,18 +706,32 @@ const addToCart = async (req, res) => {
     }
 
     // Check if product already in cart
-    const cartItem = user.cart.find((item) => item.product.toString() === productId);
+    // const cartItem = user.cart.find((item) => item.product.toString() === productId);
 
-    if (cartItem) {
-      // Update quantity
-      cartItem.quantity += quantity || 1;
-    } else {
-      // Add new item - price comes from product when populated
-      user.cart.push({ 
-        product: productId, 
-        quantity: quantity || 1
-      });
-    }
+    // if (cartItem) {
+    //   // Update quantity
+    //   cartItem.quantity += quantity || 1;
+    // } else {
+    //   // Add new item - price comes from product when populated
+    //   user.cart.push({ 
+    //     product: productId, 
+    //     quantity: quantity || 1
+    //   });
+    // }
+
+    const cartItem = user.cart.find(
+  (item) => item.productId.toString() === productId
+);
+
+if (cartItem) {
+  cartItem.quantity += quantity || 1;
+} else {
+  user.cart.push({
+    productId: productId,
+    quantity: quantity || 1
+  });
+}
+
 
     // Save user
     await user.save();
@@ -799,13 +813,10 @@ const getCart = async (req, res) => {
     // Try to populate cart with product details
     try {
       const populatedUser = await User.findById(userId).populate({
-        path: 'cart.product',
-        select: 'name price images category description',
-        populate: {
-          path: 'category',
-          select: 'name'
-        }
-      });
+  path: 'cart.productId',
+  select: 'name price images description'
+});
+
 
       res.status(200).json({ 
         success: true, 
@@ -860,12 +871,13 @@ const updateCartQuantity = async (req, res) => {
       });
     }
     
-    const cartItem = user.cart.find((item) => item.product.toString() === productId);
+    const cartItem = user.cart.find((item) => item.productId.toString()
+ === productId);
     
     if (cartItem) {
       if (quantity <= 0) {
         // Remove item if quantity is 0 or negative
-        user.cart = user.cart.filter((item) => item.product.toString() !== productId);
+        user.cart = user.cart.filter((item) => item.productId.toString() !== productId);
       } else {
         cartItem.quantity = quantity;
       }
@@ -920,7 +932,7 @@ const removeFromCart = async (req, res) => {
     }
     
     const originalLength = user.cart.length;
-    user.cart = user.cart.filter((item) => item.product.toString() !== productId);
+    user.cart = user.cart.filter((item) => item.productId.toString() !== productId);
     
     if (user.cart.length === originalLength) {
       return res.status(404).json({ 
