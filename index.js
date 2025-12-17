@@ -75,6 +75,7 @@ const allowedOrigins = [
   'http://localhost:5175',
   'https://maatimunch-fronted.onrender.com',
   'https://maatimunch-dashboard.onrender.com',
+  'https://www.maatimunch.in',
 ];
 
 app.use(cors({
