@@ -456,6 +456,7 @@ const loginUser = async (req, res) => {
 const sendOtp = async (req, res) => {
   try {
     const { email } = req.body;
+    clg("Send OTP Request for:", email);
 
     const user = await User.findOne({ email });
     if (!user)
@@ -480,7 +481,7 @@ const sendOtp = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: "OTP sent successfully",
+      message: "OTP sent successfully. Check your email.",
     });
 
   } catch (err) {
