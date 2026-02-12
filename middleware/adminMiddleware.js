@@ -57,7 +57,7 @@ const requireRole = (role) => {
   };
 };
 
-// Middleware to check multiple roles
+
 const requireAnyRole = (roles) => {
   return async (req, res, next) => {
     try {

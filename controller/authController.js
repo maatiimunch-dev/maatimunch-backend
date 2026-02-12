@@ -472,7 +472,7 @@ const sendOtp = async (req, res) => {
     await user.save();
 
     await transporter.emails.send({
-      from: "Shubham Musical <no-reply@shubhammusicals.com>",
+      from: "MaatiMunch <no-reply@maatimunch.in>",
       to: email,
       subject: "Password Reset OTP",
       html: `<p>Your OTP is <b>${otp}</b>. It expires in 6 minutes.</p>`,
