@@ -456,7 +456,7 @@ const loginUser = async (req, res) => {
 const sendOtp = async (req, res) => {
   try {
     const { email } = req.body;
-    clg("Send OTP Request for:", email);
+    console.log("Send OTP Request for:", email);
 
     const user = await User.findOne({ email });
     if (!user)
