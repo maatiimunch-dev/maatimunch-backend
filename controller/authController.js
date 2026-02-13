@@ -353,15 +353,13 @@ const registerUser = async (req, res) => {
       });
     }
 
-    // Check existing user
-    const existingUser = await User.findOne({
-      $or: [{ email }, { phone }]
-    });
+    // Check existing user - only block if BOTH email AND phone are same
+    const existingUser = await User.findOne({ email, phone });
 
     if (existingUser) {
       return res.status(400).json({
         success: false,
-        message: "Email or phone already registered",
+        message: "An account with this email and phone combination already exists",
       });
     }
 

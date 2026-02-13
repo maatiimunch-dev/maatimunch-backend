@@ -27,7 +27,7 @@ const bcrypt = require("bcryptjs");
 const userSchema = new mongoose.Schema({
   State: String,
   name: { type: String, required: true },
-  phone: { type: String, required: true, unique: true },
+  phone: { type: String, required: true},
   city: String,
   Address: String,
   Pincode: String,
@@ -53,7 +53,7 @@ const userSchema = new mongoose.Schema({
     enum: ["user", "admin"],
     default: "user"
   },
-  email: { type: String, required: true, unique: true },
+  email: { type: String, required: true },
   password: { type: String, required: true, minlength: 6 },
   resetOtp: Number,
   resetOtpExpire: Date,

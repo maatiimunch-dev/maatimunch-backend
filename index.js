@@ -124,13 +124,31 @@ app.use('*', (req, res) => {
 /* --------------------------------------------
    🛢 DATABASE
 --------------------------------------------- */
+// mongoose.connect(MONGODB_URL, { serverSelectionTimeoutMS: 10000 })
+//   .then(() => console.log('MongoDB Connected Successfully ✔'))
+//   .catch((err) => {
+//     console.error('MongoDB Connection Error:', err);
+//     process.exit(1);
+//   });
+  
+
 mongoose.connect(MONGODB_URL, { serverSelectionTimeoutMS: 10000 })
-  .then(() => console.log('MongoDB Connected Successfully ✔'))
+  .then(async () => {
+    console.log('MongoDB Connected Successfully ✔');
+
+    // ✅ DROP phone_1 INDEX - SIRF EK BAAR CHALEGA
+    try {
+      await mongoose.connection.collection("users").dropIndex("phone_1");
+      console.log("✅ phone_1 index dropped!");
+    } catch (e) {
+      console.log("ℹ️ phone_1 index already removed or not found — skipping");
+    }
+
+  })
   .catch((err) => {
     console.error('MongoDB Connection Error:', err);
     process.exit(1);
   });
-  
 /* --------------------------------------------
    🛑 GRACEFUL SHUTDOWN   
 --------------------------------------------- */
