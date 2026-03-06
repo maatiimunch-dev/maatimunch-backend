@@ -1,28 +1,3 @@
-// const express = require("express");
-// const router = express.Router();
-// const {
-//   registerUser,
-//   loginUser,
-//   getUserProfile,
-//   getAllUsers,
-//   sendOtp,
-//   verifyOtp,
-//   resetPassword,
-// } = require("../controller/authController.js");
-
-// const { protect } = require("../middleware/authMiddleware");
-
-// // Auth routes
-// router.post("/register", registerUser);
-// router.post("/login", loginUser);
-//     router.get("/profile", protect, getUserProfile);
-//  router.get("/users", getAllUsers);
-
-// module.exports = router;
-
-
-
-
 
 
 const express = require('express');
@@ -49,3 +24,5 @@ router.get('/profile', protect, getUserProfile);
 router.get('/users', getAllUsers);
 
 module.exports = router;
+
+
