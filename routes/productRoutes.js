@@ -32,6 +32,14 @@
 
 // module.exports = router;
 
+
+
+
+
+
+
+
+
 // const express = require('express');
 // const router = express.Router();
 
@@ -128,11 +136,11 @@ router.delete('/cart/clear', protect, clearCart);
 router.get('/', cacheMiddleware((req) => `products:${JSON.stringify(req.query)}`, 3600), fetchProduct);
 
 // Admin
-router.post('/', protect, requireAdmin, upload.array('images'), createProduct);
+router.post('/add', protect, requireAdmin, upload.array('images'), createProduct);
 
 // ⚠️ /:id SABSE LAST — ye hai asli fix
-router.get('/:id', cacheMiddleware((req) => `product:${req.params.id}`, 3600), fetchSingleProduct);
-router.put('/:id', protect, requireAdmin, upload.array('images'), editProduct);
-router.delete('/:id', protect, requireAdmin, deleteProduct);
+router.get('/single/:id', cacheMiddleware((req) => `product:${req.params.id}`, 3600), fetchSingleProduct);
+router.put('/edit/:id', protect, requireAdmin, upload.array('images'), editProduct);
+router.delete('/delete/:id', protect, requireAdmin, deleteProduct);
 
 module.exports = router;
